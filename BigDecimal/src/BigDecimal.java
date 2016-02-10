@@ -3,15 +3,17 @@ import java.util.ArrayList;
 public class BigDecimal {
 	// this list stores as many digits as needed
 	private ArrayList<Integer> myList = new ArrayList<>();
-	boolean sign = true;
+	public int sign = 1;
 	public BigDecimal(String input) {
 		if(!input.isEmpty() && input.charAt(0) == '-'){
-			sign = false;
+			sign = -1;
 			input = input.substring(1);
+			
 		}
 		
 		for (int i = 0; i < input.length(); i++) {
 			{
+			//	System.out.println("input at " + i +" is: "+ input.charAt(i));
 				myList.add(Integer.parseInt("" + input.charAt(i)));
 			}
 		}
@@ -47,17 +49,27 @@ public class BigDecimal {
 		int overflow = 0;
 		int i = 0;
 		while (i < small.myList.size()) {
-			int sum = rA.get(i) + rB.get(i) + overflow;
+			int sum = (rA.get(i) * small.sign)  + (rB.get(i) * large.sign) + overflow;
 			overflow = sum / 10;
+			if(small.sign != large.sign && sum < 0){
+				result = (sum % 10) + 10 + result;
+				overflow -= 1;
+			}else{
 			result = (sum % 10) + result;
+			}
 			i++;
 
 		}
 
 		while (i < large.myList.size()) {
-			int sum = rB.get(i) + overflow;
+			int sum = (rB.get(i) * large.sign)  + overflow;
 			overflow = sum / 10;
+			if(small.sign != large.sign && sum < 0){
+				result = (sum % 10) + 10 + result;
+				overflow -= 1;
+			}else{
 			result = (sum % 10) + result;
+			}
 			i++;
 		}
 		if (overflow > 0) {

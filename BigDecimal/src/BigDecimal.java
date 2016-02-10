@@ -132,7 +132,23 @@ public class BigDecimal {
 	}
 
 	public BigDecimal multiply(BigDecimal bd2) {
+		BigDecimal result = new BigDecimal("");
+		
+		for(int i = 0; i < myList.size(); i++){
+			for(int q = 0; q < bd2.myList.size(); q++){
+				BigDecimal temp = new BigDecimal(
+						bigMultiply( myList.get(i), i, bd2.myList.get(q), q));
+			}
+		}
+		return null;
+	}
 
+	private String bigMultiply(Integer integer, int i, Integer integer2, int q) {
+		int zeroes = i + q;
+		int product = integer * integer2;
+		for(int z = 0; z < zeroes; z++){
+			
+		}
 		return null;
 	}
 

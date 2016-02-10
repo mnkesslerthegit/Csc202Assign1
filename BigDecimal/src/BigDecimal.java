@@ -3,8 +3,13 @@ import java.util.ArrayList;
 public class BigDecimal {
 	// this list stores as many digits as needed
 	private ArrayList<Integer> myList = new ArrayList<>();
-
+	boolean sign = true;
 	public BigDecimal(String input) {
+		if(!input.isEmpty() && input.charAt(0) == '-'){
+			sign = false;
+			input = input.substring(1);
+		}
+		
 		for (int i = 0; i < input.length(); i++) {
 			{
 				myList.add(Integer.parseInt("" + input.charAt(i)));
@@ -149,7 +154,7 @@ public class BigDecimal {
 		int zeroes = i + q;
 		int product = integer * integer2;
 		String result = "" + product;
-		System.out.println(result);
+	//	System.out.println(result);
 		for (int z = 0; z < zeroes; z++) {
 			result += "0";
 		}

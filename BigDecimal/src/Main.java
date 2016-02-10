@@ -49,11 +49,13 @@ public class Main {
 	 * @return
 	 */
 	private static boolean checkFormat(String input) {
-
+			
 		for (int i = 0; i < input.length(); i++) {
 			if (Character.isAlphabetic(input.charAt(i))) {
+				if(i != 0 || input.charAt(i) != '-'){
 				System.out.println("Bad input: try again");
 				return false;
+				}
 			}
 		}
 

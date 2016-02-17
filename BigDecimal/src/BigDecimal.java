@@ -49,14 +49,12 @@ public class BigDecimal {
 		int overflow = 0;
 		int i = 0;
 		while (i < small.myList.size()) {
-			int sum = (rA.get(i) * small.sign)  + (rB.get(i) * large.sign) + overflow;
+			int sum = rA.get(i)  + rB.get(i)+ overflow;
 			overflow = sum / 10;
-			if(small.sign != large.sign && sum < 0){
-				result = (sum % 10) + 10 + result;
-				overflow -= 1;
-			}else{
+			
+				
 			result = (sum % 10) + result;
-			}
+			
 			i++;
 
 		}
@@ -75,13 +73,77 @@ public class BigDecimal {
 		if (overflow > 0) {
 			result = overflow + result;
 		}
+		
+		if(sign < 0 && bd2.sign < 0){
+			return new BigDecimal("-" + result);
+		}else{
 		return new BigDecimal(result);
+		}
 
 	}
+	
+	/**
+	 * Returns the compliment of a number
+	 * @param arg the number to take the compliment of
+	 * @param size a string of the desired size of the compliment
+	 * @return
+	 */
+	private ArrayList<Integer> compliment(ArrayList<Integer> arg, int size){
+		ArrayList<Integer> result = new ArrayList<>();
+		
+		if(arg.size() < size){
+			int diff = size - arg.size();
+			for(int i = 0; i < diff; i++){
+				result.add(9);
+			}
+		}else{
+			
+		}
+		for(int i = 0; i < arg.size(); i++){
+			result.add(9- arg.get(i));
+			
+		}
+		return result;
+	}
 
+	/**
+	 * Subtracts B from A.
+	 * @param A
+	 * @param B
+	 * @return
+	 */
+	public BigDecimal subtract(BigDecimal A, BigDecimal B){
+		
+		BigDecimal result;
+		//subtracting negative from positive is adding
+		if(A.sign > 0 && B.sign < 0){
+			return A.add(B);
+			//subtracting positive from negative is adding
+		}else if(A.sign < 0 && B.sign > 0){
+			return A.add(B);
+			//add compliment, and subtract excess
+		}else if(A.sign > 0 &&  B.sign > 0){
+			
+		}
+		
+		
+		
+		BigDecimal large = A.larger(B);
+		
+		
+		
+		
+		return large;
+		
+		
+	}
+	
 	public String toString() {
 		return myList.toString();
 	}
+	
+	
+	
 
 	/**
 	 * Check to see if one big decimal is greater than another
@@ -89,7 +151,7 @@ public class BigDecimal {
 	 * @param other
 	 * @return
 	 */
-	public boolean greaterThan(BigDecimal other) {
+	public boolean greaterMagnitude(BigDecimal other) {
 		if (other.myList.size() < myList.size()) {
 			return true;
 		} else if (other.myList.size() > myList.size()) {
@@ -115,7 +177,7 @@ public class BigDecimal {
 	 * @return
 	 */
 	private BigDecimal larger(BigDecimal other) {
-		if (greaterThan(other)) {
+		if (greaterMagnitude(other)) {
 			return this;
 		} else {
 			return other;
@@ -130,7 +192,7 @@ public class BigDecimal {
 	 * @return
 	 */
 	private BigDecimal smaller(BigDecimal other) {
-		if (greaterThan(other)) {
+		if (greaterMagnitude(other)) {
 			return other;
 		} else {
 			return this;

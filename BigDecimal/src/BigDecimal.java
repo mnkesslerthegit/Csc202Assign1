@@ -2,21 +2,42 @@ import java.util.ArrayList;
 
 public class BigDecimal {
 	// this list stores as many digits as needed
-	private ArrayList<Integer> myList = new ArrayList<>();
+	private ArrayList<Integer> regular = new ArrayList<>();
+	private ArrayList<Integer> decimal = new ArrayList<>();
 	public int sign = 1;
+
 	public BigDecimal(String input) {
-		if(!input.isEmpty() && input.charAt(0) == '-'){
+		if (!input.isEmpty() && input.charAt(0) == '-') {
 			sign = -1;
 			input = input.substring(1);
-			
+
 		}
-		
+
 		for (int i = 0; i < input.length(); i++) {
-			{
-			//	System.out.println("input at " + i +" is: "+ input.charAt(i));
-				myList.add(Integer.parseInt("" + input.charAt(i)));
+
+			// System.out.println("input at " + i +" is: "+
+			// input.charAt(i));
+
+			if (input.charAt(i) == '.') {
+
+				for (int q = i + 1; q < input.length(); q++) {
+
+					decimal.add((Integer.parseInt(input.charAt(q) + "")));
+				}
+				break;
+
+			} else {
+				regular.add((Integer.parseInt(input.charAt(i) + "")));
 			}
+
 		}
+		// System.out.print(this.regular + " hi ");
+	}
+
+	public BigDecimal(ArrayList<Integer> reg, ArrayList<Integer> dec) {
+
+		regular = reg;
+		decimal = dec;
 	}
 
 	/**
@@ -40,110 +61,133 @@ public class BigDecimal {
 	 * @return
 	 */
 	public BigDecimal add(BigDecimal bd2) {
-		BigDecimal small = smaller(bd2);
-		BigDecimal large = larger(bd2);
-		ArrayList<Integer> rA = reverseList(small.myList);
-		ArrayList<Integer> rB = reverseList(large.myList);
+		// System.out.println(this.dot + " 1 dot");
+		// System.out.println(bd2.dot + " 2 dot");
+
+		BigDecimal small = this.smaller(bd2);
+		BigDecimal large = this.larger(bd2);
+
+		BigDecimal regular = addHelper(large.regular, small.regular);
+
+		BigDecimal decimal = addHelper(small.decimal, large.decimal);
+		// special case where decimals add up to one
+		if (decimal.regular.size() > small.decimal.size() && decimal.regular.size() > large.decimal.size()) {
+			regular = addHelper(regular.regular, new BigDecimal("1").regular);
+			decimal.regular.remove(0);
+		}
+
+		return new BigDecimal(regular.regular, decimal.regular);
+
+	}
+
+	/**
+	 * Adds numbers without decimals
+	 * 
+	 * @param large
+	 * @param small
+	 * @return
+	 */
+	private BigDecimal addHelper(ArrayList<Integer> large, ArrayList<Integer> small) {
+
+		ArrayList<Integer> rA = reverseList(small);
+		ArrayList<Integer> rB = reverseList(large);
 		String result = "";
 
 		int overflow = 0;
 		int i = 0;
-		while (i < small.myList.size()) {
-			int sum = rA.get(i)  + rB.get(i)+ overflow;
+		while (i < small.size()) {
+			int sum = rA.get(i) + rB.get(i) + overflow;
 			overflow = sum / 10;
-			
-				
+
 			result = (sum % 10) + result;
-			
+
 			i++;
 
 		}
 
-		while (i < large.myList.size()) {
-			int sum = (rB.get(i) * large.sign)  + overflow;
+		while (i < large.size()) {
+			int sum = (rB.get(i)) + overflow;
 			overflow = sum / 10;
-			if(small.sign != large.sign && sum < 0){
-				result = (sum % 10) + 10 + result;
-				overflow -= 1;
-			}else{
+
 			result = (sum % 10) + result;
-			}
+
 			i++;
 		}
 		if (overflow > 0) {
 			result = overflow + result;
 		}
-		
-		if(sign < 0 && bd2.sign < 0){
-			return new BigDecimal("-" + result);
-		}else{
+
 		return new BigDecimal(result);
-		}
 
 	}
-	
+
 	/**
 	 * Returns the compliment of a number
-	 * @param arg the number to take the compliment of
-	 * @param size a string of the desired size of the compliment
+	 * 
+	 * @param arg
+	 *            the number to take the compliment of
+	 * @param size
+	 *            a string of the desired size of the compliment
 	 * @return
 	 */
-	private ArrayList<Integer> compliment(ArrayList<Integer> arg, int size){
+	private ArrayList<Integer> compliment(ArrayList<Integer> arg, int size) {
 		ArrayList<Integer> result = new ArrayList<>();
-		
-		if(arg.size() < size){
+
+		if (arg.size() < size) {
 			int diff = size - arg.size();
-			for(int i = 0; i < diff; i++){
+			for (int i = 0; i < diff; i++) {
 				result.add(9);
 			}
-		}else{
-			
+		} else {
+
 		}
-		for(int i = 0; i < arg.size(); i++){
-			result.add(9- arg.get(i));
-			
+		for (int i = 0; i < arg.size(); i++) {
+			result.add(9 - arg.get(i));
+
 		}
 		return result;
 	}
 
 	/**
 	 * Subtracts B from A.
+	 * 
 	 * @param A
 	 * @param B
 	 * @return
 	 */
-	public BigDecimal subtract(BigDecimal A, BigDecimal B){
-		
+	public BigDecimal subtract(BigDecimal A, BigDecimal B) {
+
 		BigDecimal result;
-		//subtracting negative from positive is adding
-		if(A.sign > 0 && B.sign < 0){
+		// subtracting negative from positive is adding
+		if (A.sign > 0 && B.sign < 0) {
 			return A.add(B);
-			//subtracting positive from negative is adding
-		}else if(A.sign < 0 && B.sign > 0){
+			// subtracting positive from negative is adding
+		} else if (A.sign < 0 && B.sign > 0) {
 			return A.add(B);
-			//add compliment, and subtract excess
-		}else if(A.sign > 0 &&  B.sign > 0){
-			
+			// add compliment, and subtract excess
+		} else if (A.sign > 0 && B.sign > 0) {
+
 		}
-		
-		
-		
+
 		BigDecimal large = A.larger(B);
-		
-		
-		
-		
+
 		return large;
-		
-		
+
 	}
-	
+
 	public String toString() {
-		return myList.toString();
+		String result = "";
+		for (int i = 0; i < regular.size(); i++) {
+			result += regular.get(i);
+
+		}
+		result += ".";
+		for (int i = 0; i < decimal.size(); i++) {
+			result += decimal.get(i);
+
+		}
+		return result;
 	}
-	
-	
-	
 
 	/**
 	 * Check to see if one big decimal is greater than another
@@ -152,21 +196,12 @@ public class BigDecimal {
 	 * @return
 	 */
 	public boolean greaterMagnitude(BigDecimal other) {
-		if (other.myList.size() < myList.size()) {
+		if (other.regular.size() < regular.size()) {
 			return true;
-		} else if (other.myList.size() > myList.size()) {
+		} else if (other.regular.size() > regular.size()) {
 			return false;
 
 		}
-
-		for (int i = 0; i < other.myList.size(); i++) {
-			if (myList.get(i) > other.myList.get(i)) {
-				return true;
-			} else if (myList.get(i) < other.myList.get(i)) {
-				return false;
-			}
-		}
-
 		return false;
 	}
 
@@ -212,15 +247,15 @@ public class BigDecimal {
 
 	public BigDecimal multiply(BigDecimal bd2) {
 		BigDecimal result = new BigDecimal("");
-
-		for (int i = 0; i < myList.size(); i++) {
-			for (int q = 0; q < bd2.myList.size(); q++) {
-				BigDecimal temp = new BigDecimal(bigMultiply(myList.get(i),
-						myList.size() - i - 1, bd2.myList.get(q),
-						bd2.myList.size() - q - 1));
-				result = result.add(temp);
-			}
-		}
+		//
+		// for (int i = 0; i < myList.size(); i++) {
+		// for (int q = 0; q < bd2.myList.size(); q++) {
+		// BigDecimal temp = new BigDecimal(bigMultiply(myList.get(i),
+		// myList.size() - i - 1, bd2.myList.get(q),
+		// bd2.myList.size() - q - 1));
+		// result = result.add(temp);
+		// }
+		// }
 		return result;
 	}
 
@@ -228,7 +263,7 @@ public class BigDecimal {
 		int zeroes = i + q;
 		int product = integer * integer2;
 		String result = "" + product;
-	//	System.out.println(result);
+		// System.out.println(result);
 		for (int z = 0; z < zeroes; z++) {
 			result += "0";
 		}

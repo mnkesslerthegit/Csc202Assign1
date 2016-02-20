@@ -69,7 +69,7 @@ public class Main {
 		System.out.println(bd1.add(bd2));
 	//	System.out.println(bd1.subtract(bd2));
 	//	System.out.println(bd1.divide(bd2));
-		System.out.println(bd1.multiply(bd2));
+	//	System.out.println(bd1.multiply(bd2));
 	}
 
 }

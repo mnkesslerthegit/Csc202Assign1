@@ -12,34 +12,40 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
-		BigDecimal bdA;
-		BigDecimal bdB;
-		
+		BigDecimal bdA = null;
+		BigDecimal bdB = null;		
 	
 		 //check if user is trying to use command line arguments		 
 		if (args.length == 2) {
 			bdA = new BigDecimal(args[1]);
 			bdB = new BigDecimal(args[2]);
 		} else { // if not using arguments, prompt user for numbers
-			String input = "";
-			//prompt for first number
-			do {
-				System.out.println("Enter number 1");
-				input = scan.nextLine();
-			} while (!checkFormat(input));
-			bdA = new BigDecimal(input);
-			//prompt for second number
-			input = "";
-			do {
-				System.out.println("Enter number 2");
-				input = scan.nextLine();
-			} while (!checkFormat(input));
-			bdB = new BigDecimal(input);
-
-			//do operations and print results
-			printOperations(bdA,bdB);
-
+		for(int i = 0; i < 5; i++){
+			getInput(bdA, bdB);
 		}
+		}
+	}
+	
+	private static void getInput(BigDecimal bdA, BigDecimal bdB){
+		
+		
+		String input = "";
+		//prompt for first number
+		do {
+			System.out.println("Enter number 1");
+			input = scan.nextLine();
+		} while (!checkFormat(input));
+		bdA = new BigDecimal(input);
+		//prompt for second number
+		input = "";
+		do {
+			System.out.println("Enter number 2");
+			input = scan.nextLine();
+		} while (!checkFormat(input));
+		bdB = new BigDecimal(input);
+
+		//do operations and print results
+		printOperations(bdA,bdB);
 	}
 
 	/**
@@ -66,10 +72,10 @@ public class Main {
 	 * The print method which displays the result of each operation
 	 */
 	private static void printOperations(BigDecimal bd1, BigDecimal bd2) {
-		System.out.println(bd1.add(bd2));
+		//System.out.println(bd1.add(bd2));
 	//	System.out.println(bd1.subtract(bd2));
 	//	System.out.println(bd1.divide(bd2));
-	//	System.out.println(bd1.multiply(bd2));
+		System.out.println("multiply:" + bd1.multiply(bd2));
 	}
 
 }

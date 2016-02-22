@@ -72,10 +72,11 @@ public class Main {
 	 * The print method which displays the result of each operation
 	 */
 	private static void printOperations(BigDecimal bd1, BigDecimal bd2) {
-		//System.out.println(bd1.add(bd2));
-	//	System.out.println(bd1.subtract(bd2));
+	//	System.out.println("hi1");
+		//	System.out.println(bd1.add(bd2));
+		System.out.println(bd1.subtract(bd2));
 	//	System.out.println(bd1.divide(bd2));
-		System.out.println("multiply:" + bd1.multiply(bd2));
+	//	System.out.println("multiply:" + bd1.multiply(bd2));
 	}
 
 }

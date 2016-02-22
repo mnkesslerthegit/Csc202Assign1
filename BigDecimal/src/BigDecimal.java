@@ -31,8 +31,8 @@ public class BigDecimal {
 
 	}
 
-	public BigDecimal(ArrayList<Integer> reg, ArrayList<Integer> dec) {
-
+	public BigDecimal(ArrayList<Integer> reg, ArrayList<Integer> dec, int sign) {
+		sign = sign;
 		regular = reg;
 		decimal = dec;
 	}
@@ -76,7 +76,12 @@ public class BigDecimal {
 			decimal.regular.remove(0);
 		}
 
-		return new BigDecimal(regular.regular, decimal.regular);
+		BigDecimal result = new BigDecimal(regular.regular, decimal.regular, 1);
+		if (large.sign < 0) {
+			result.sign = -1;
+		}
+		System.out.println("sign 1: " + sign + "sign2" + bd2.sign + "   " + result.sign);
+		return result;
 
 	}
 
@@ -155,7 +160,11 @@ public class BigDecimal {
 
 		}
 		for (int i = 0; i < arg.size(); i++) {
-			result.add(9 - arg.get(i));
+			if (i == arg.size() - 1) {
+				result.add(10 - arg.get(i));
+			} else {
+				result.add(9 - arg.get(i));
+			}
 
 		}
 		return result;
@@ -168,28 +177,73 @@ public class BigDecimal {
 	 * @param B
 	 * @return
 	 */
-	public BigDecimal subtract(BigDecimal A, BigDecimal B) {
+	public BigDecimal subtract(BigDecimal B) {
 
 		BigDecimal result;
 		// subtracting negative from positive is adding
-		if (A.sign > 0 && B.sign < 0) {
-			return A.add(B);
-			// subtracting positive from negative is adding
-		} else if (A.sign < 0 && B.sign > 0) {
-			return A.add(B);
-			// add compliment, and subtract excess
-		} else if (A.sign > 0 && B.sign > 0) {
+		if (sign > 0 && B.sign < 0) {
 
+			BigDecimal C = new BigDecimal(B.regular, B.decimal, 1);
+			return this.add(C);
+			// subtracting positive from negative is adding
+		} else if (sign < 0 && B.sign > 0) {
+			BigDecimal C = new BigDecimal(regular, decimal, 1);
+			result = add(C);
+			result.sign = -1;
+			return result;
+			// add compliment, and subtract excess
+		} else {
+			// System.out.println(compliment(B.regular, regular.size()) + "
+			// one");
+			// System.out.println(compliment(B.decimal, decimal.size()) + "
+			// two");
+			
+			ArrayList<Integer> largeDecimal = largerArray(decimal, B.decimal);
+			ArrayList<Integer> largeregular = largerArray(decimal, B.decimal);
+			
+			BigDecimal C = new BigDecimal(compliment(B.regular, regular.size()), compliment(B.decimal, decimal.size()),
+					1);
+
+			C = this.add(C);
+			if (!C.regular.isEmpty()) {
+				C.regular.remove(0);
+			}
+			
+			if (!(sign > 0 && B.sign > 0)) {
+				C.sign = -1;
+			}
+			if (C.decimal.get(0) + decimal.get(0) >= 10) {
+				C.regular.set(0, C.regular.get(0) - 1);
+			}
+			System.out.println("C " + C);
+			return C;
 		}
 
-		BigDecimal large = A.larger(B);
-
-		return large;
-
+	}
+	
+	private ArrayList<Integer> largerArray(ArrayList<Integer> A, ArrayList<Integer> B){
+		int i = A.size();
+		if(i > B.size()){
+			i = B.size();
+		}
+		for(int q = 0; q < i; q++){
+			if(A.get(q) > B.get(q)){
+				return A;
+			}else if(B.get(q) > A.get(q)){
+				return B;
+			}
+				
+			
+		}
+		return A;
+		
 	}
 
 	public String toString() {
 		String result = "";
+		if (sign < 0) {
+			result = "-" + result;
+		}
 		for (int i = 0; i < regular.size(); i++) {
 			result += regular.get(i);
 
@@ -248,21 +302,11 @@ public class BigDecimal {
 
 	}
 
-	public BigDecimal subtract(BigDecimal bd2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public BigDecimal divide(BigDecimal bd2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public BigDecimal multiply(BigDecimal bd2) {
 		BigDecimal result = new BigDecimal("0");
 		int i = regular.size() + decimal.size();
 		int q = bd2.regular.size() + bd2.decimal.size();
-	//	System.out.println("I: " + i + " q " + q);
+		// System.out.println("I: " + i + " q " + q);
 		Integer ival;
 		Integer qval;
 		while (i > 0) {
@@ -273,22 +317,22 @@ public class BigDecimal {
 				// decide what list the number being multiplied comes from
 				// (regular or decimal)
 				if (iPower >= 0) {
-					ival = regular.get(i-1);
+					ival = regular.get(i - 1);
 				} else {
-					ival = decimal.get(-iPower-1);
+					ival = decimal.get(-iPower - 1);
 				}
 				if (qPower >= 0) {
-					qval = bd2.regular.get(q-1);
+					qval = bd2.regular.get(q - 1);
 				} else {
-					qval = bd2.decimal.get(-qPower-1);
+					qval = bd2.decimal.get(-qPower - 1);
 				}
-		
+
 				BigDecimal temp = new BigDecimal(bigMultiply(ival, iPower, qval, qPower));
 				result = result.add(temp);
-			//	System.out.println(result);
+				// System.out.println(result);
 				q--;
 			}
-			q =  bd2.regular.size() + bd2.decimal.size();
+			q = bd2.regular.size() + bd2.decimal.size();
 			i--;
 
 		}
@@ -322,8 +366,8 @@ public class BigDecimal {
 	 * @return
 	 */
 	private String bigMultiply(Integer integer, int i, Integer integer2, int q) {
-	//	System.out.println(integer + "   " + i + "    " + integer2 + "     " + q);
-		
+		// System.out.println(integer + " " + i + " " + integer2 + " " + q);
+
 		int zeroes = i + q;
 		int product = integer * integer2;
 		String result = "" + product;
@@ -334,23 +378,23 @@ public class BigDecimal {
 			}
 			System.out.println("bigMultiply: " + result);
 			return result;
-		} else if( zeroes < 0){
+		} else if (zeroes < 0) {
 			int z = -1;
-			if(product >= 10){
+			if (product >= 10) {
 				z--;
 			}
-			while(z > zeroes) {
+			while (z > zeroes) {
 				result = "0" + result;
-				 z--;
+				z--;
 			}
-			if(product >= 10 && zeroes == -1 ){
-			result = result.charAt(0) + "." + result.substring(1);
-			}else{
+			if (product >= 10 && zeroes == -1) {
+				result = result.charAt(0) + "." + result.substring(1);
+			} else {
 				result = "." + result;
 			}
 			System.out.println("bigMultiply: " + result);
 			return result;
-		}else{
+		} else {
 			System.out.println("bigMultiply: " + result);
 			return result;
 		}

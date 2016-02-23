@@ -9,8 +9,9 @@ public class Main {
 	 * then print the sum, difference, product, quotien of A and B.
 	 * 
 	 * @param args
+	 * @throws NotANumberException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NotANumberException {
 
 		BigDecimal bdA = null;
 		BigDecimal bdB = null;		
@@ -20,13 +21,13 @@ public class Main {
 			bdA = new BigDecimal(args[1]);
 			bdB = new BigDecimal(args[2]);
 		} else { // if not using arguments, prompt user for numbers
-		for(int i = 0; i < 5; i++){
+	
 			getInput(bdA, bdB);
-		}
+	
 		}
 	}
 	
-	private static void getInput(BigDecimal bdA, BigDecimal bdB){
+	private static void getInput(BigDecimal bdA, BigDecimal bdB) throws NotANumberException{
 		
 		
 		String input = "";
@@ -53,14 +54,14 @@ public class Main {
 	 * 
 	 * @param input
 	 * @return
+	 * @throws NotANumberException 
 	 */
-	private static boolean checkFormat(String input) {
+	private static boolean checkFormat(String input) throws NotANumberException {
 			
 		for (int i = 0; i < input.length(); i++) {
 			if (Character.isAlphabetic(input.charAt(i))) {
 				if(i != 0 || input.charAt(i) != '-'){
-				System.out.println("Bad input: try again");
-				return false;
+					throw new NotANumberException();
 				}
 			}
 		}
@@ -73,10 +74,10 @@ public class Main {
 	 */
 	private static void printOperations(BigDecimal bd1, BigDecimal bd2) {
 	//	System.out.println("hi1");
-		//	System.out.println(bd1.add(bd2));
-		System.out.println(bd1.subtract(bd2));
+			System.out.println("Addition yeilds " + bd1.add(bd2));
+		System.out.println("subtraction yeilds: " + bd1.subtract(bd2));
 	//	System.out.println(bd1.divide(bd2));
-	//	System.out.println("multiply:" + bd1.multiply(bd2));
+		System.out.println(" multiplication yeilds" + bd1.multiply(bd2));
 	}
 
 }

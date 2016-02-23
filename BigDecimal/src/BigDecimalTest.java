@@ -1,7 +1,10 @@
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
+/**
+ * I used this test to develop the multiplication method
+ * @author Max
+ *
+ */
 public class BigDecimalTest {
 
 	@Test

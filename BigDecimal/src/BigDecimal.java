@@ -32,7 +32,7 @@ public class BigDecimal {
 	}
 
 	public BigDecimal(ArrayList<Integer> reg, ArrayList<Integer> dec, int sign) {
-		sign = sign;
+		//sign = sign;
 		regular = reg;
 		decimal = dec;
 	}
@@ -80,7 +80,7 @@ public class BigDecimal {
 		if (large.sign < 0) {
 			result.sign = -1;
 		}
-		System.out.println("sign 1: " + sign + "sign2" + bd2.sign + "   " + result.sign);
+	//	System.out.println("sign 1: " + sign + "sign2" + bd2.sign + "   " + result.sign);
 		return result;
 
 	}
@@ -198,8 +198,8 @@ public class BigDecimal {
 			// System.out.println(compliment(B.decimal, decimal.size()) + "
 			// two");
 
-			ArrayList<Integer> smallDecimal = smallArray(decimal, B.decimal);
-			ArrayList<Integer> smallRegular = smallArray(decimal, B.decimal);
+	//		ArrayList<Integer> smallDecimal = smallArray(decimal, B.decimal);
+		//	ArrayList<Integer> smallRegular = smallArray(decimal, B.decimal);
 
 			BigDecimal C = new BigDecimal(compliment(B.regular, regular.size()), compliment(B.decimal, decimal.size()),
 					1);
@@ -216,12 +216,13 @@ public class BigDecimal {
 				C.sign = -1;
 			}
 
-			System.out.println("C " + C);
+		//	System.out.println("C " + C);
 			return C;
 		}
 
 	}
 
+	@SuppressWarnings("unused")
 	private ArrayList<Integer> smallArray(ArrayList<Integer> decimal2, ArrayList<Integer> decimal3) {
 		ArrayList<Integer> temp = largerArray(decimal2, decimal3);
 		if(decimal2 == temp){
@@ -249,6 +250,9 @@ public class BigDecimal {
 
 	}
 
+	/**
+	 * Print a big decimal
+	 */
 	public String toString() {
 		String result = "";
 		if (sign < 0) {
@@ -312,6 +316,11 @@ public class BigDecimal {
 
 	}
 
+	/**
+	 * Multipies big decimals
+	 * @param bd2
+	 * @return
+	 */
 	public BigDecimal multiply(BigDecimal bd2) {
 		BigDecimal result = new BigDecimal("0");
 		int i = regular.size() + decimal.size();
@@ -348,19 +357,19 @@ public class BigDecimal {
 		}
 		return result;
 	}
-
-	private BigDecimal multiplyHelper(ArrayList<Integer> A, ArrayList<Integer> B) {
-		BigDecimal result = new BigDecimal("");
-		for (int i = 0; i < A.size(); i++) {
-			for (int q = 0; q < B.size(); q++) {
-				BigDecimal temp = new BigDecimal(bigMultiply(A.get(i), A.size() - i - 1, B.get(q), B.size() - q - 1));
-				result = result.add(temp);
-			}
-		}
-
-		return result;
-
-	}
+//
+//	private BigDecimal multiplyHelper(ArrayList<Integer> A, ArrayList<Integer> B) {
+//		BigDecimal result = new BigDecimal("");
+//		for (int i = 0; i < A.size(); i++) {
+//			for (int q = 0; q < B.size(); q++) {
+//				BigDecimal temp = new BigDecimal(bigMultiply(A.get(i), A.size() - i - 1, B.get(q), B.size() - q - 1));
+//				result = result.add(temp);
+//			}
+//		}
+//
+//		return result;
+//
+//	}
 
 	/**
 	 * Multiplies two single digits raised to an arbitrary power of ten
@@ -402,10 +411,10 @@ public class BigDecimal {
 			} else {
 				result = "." + result;
 			}
-			System.out.println("bigMultiply: " + result);
+	//		System.out.println("bigMultiply: " + result);
 			return result;
 		} else {
-			System.out.println("bigMultiply: " + result);
+		//	System.out.println("bigMultiply: " + result);
 			return result;
 		}
 	}

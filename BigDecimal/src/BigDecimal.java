@@ -197,46 +197,56 @@ public class BigDecimal {
 			// one");
 			// System.out.println(compliment(B.decimal, decimal.size()) + "
 			// two");
-			
-			ArrayList<Integer> largeDecimal = largerArray(decimal, B.decimal);
-			ArrayList<Integer> largeregular = largerArray(decimal, B.decimal);
-			
+
+			ArrayList<Integer> smallDecimal = smallArray(decimal, B.decimal);
+			ArrayList<Integer> smallRegular = smallArray(decimal, B.decimal);
+
 			BigDecimal C = new BigDecimal(compliment(B.regular, regular.size()), compliment(B.decimal, decimal.size()),
 					1);
 
 			C = this.add(C);
+			if (!C.decimal.isEmpty() && C.decimal.get(0) + decimal.get(0) >= 10) {
+				C.regular.set(0, C.regular.get(0) - 1);
+			}
 			if (!C.regular.isEmpty()) {
 				C.regular.remove(0);
 			}
-			
+
 			if (!(sign > 0 && B.sign > 0)) {
 				C.sign = -1;
 			}
-			if (C.decimal.get(0) + decimal.get(0) >= 10) {
-				C.regular.set(0, C.regular.get(0) - 1);
-			}
+
 			System.out.println("C " + C);
 			return C;
 		}
 
 	}
+
+	private ArrayList<Integer> smallArray(ArrayList<Integer> decimal2, ArrayList<Integer> decimal3) {
+		ArrayList<Integer> temp = largerArray(decimal2, decimal3);
+		if(decimal2 == temp){
+			return decimal3;
+		}else{
+			return decimal3;
+		}
 	
-	private ArrayList<Integer> largerArray(ArrayList<Integer> A, ArrayList<Integer> B){
+	}
+
+	private ArrayList<Integer> largerArray(ArrayList<Integer> A, ArrayList<Integer> B) {
 		int i = A.size();
-		if(i > B.size()){
+		if (i > B.size()) {
 			i = B.size();
 		}
-		for(int q = 0; q < i; q++){
-			if(A.get(q) > B.get(q)){
+		for (int q = 0; q < i; q++) {
+			if (A.get(q) > B.get(q)) {
 				return A;
-			}else if(B.get(q) > A.get(q)){
+			} else if (B.get(q) > A.get(q)) {
 				return B;
 			}
-				
-			
+
 		}
 		return A;
-		
+
 	}
 
 	public String toString() {

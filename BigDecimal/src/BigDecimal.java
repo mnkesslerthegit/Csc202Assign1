@@ -267,7 +267,8 @@ public class BigDecimal {
 			System.out.println(smallReg);
 			System.out.println(largeDec);
 			System.out.println(smallDec);
-
+			
+			
 			// subtract the smaller values from the greater values
 			BigDecimal C = new BigDecimal(largeReg, largeDec, 1);
 		//	ArrayList<Integer> smallRegComp = compliment(smallReg, smallReg.size());
@@ -278,6 +279,14 @@ public class BigDecimal {
 			}
 			BigDecimal D = new BigDecimal(compliment(smallReg, magnitude), compliment(smallDec, smallDec.size()),
 					1);
+			
+			if(D.decimal.isEmpty() && !B.decimal.isEmpty()){
+				D.decimal.add(9); 
+			}
+			
+			if(D.regular.isEmpty() && !B.regular.isEmpty()){
+				smallReg.add(9); 
+			}
 
 			System.out.println("C: " + C);
 			System.out.println("D: " + D);
@@ -305,12 +314,17 @@ public class BigDecimal {
 				}
 			}
 
-		
-
+			
+			
 			
 
 			E.sign = greaterValue(this, B);
 			// System.out.println("C " + C);
+			
+			
+			
+			
+			
 			return E;
 		}
 		

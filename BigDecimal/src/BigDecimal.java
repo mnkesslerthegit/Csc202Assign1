@@ -59,21 +59,23 @@ public class BigDecimal {
 	 */
 	public BigDecimal add(BigDecimal bd2) {
 
-		//System.out.println("Signs:" + sign + "   " + bd2.sign);
-		if(sign > 0 && bd2.sign < 0){
-			BigDecimal positive = new BigDecimal(bd2.regular,bd2.decimal, 1);
-			
+		// first determine if this is actually subtraction.
+		if (sign > 0 && bd2.sign < 0) { // adding a negative number is
+										// subtracting
+			BigDecimal positive = new BigDecimal(bd2.regular, bd2.decimal, 1);
+
 			return this.subtract(positive);
-			
+
 		}
-		
-		if(sign < 0 && bd2.sign > 0){
-			BigDecimal positive = new BigDecimal(this.regular,this.decimal, 1);
+
+		if (sign < 0 && bd2.sign > 0) { // adding a positive number to a
+										// negative number is subtracting.
+			BigDecimal positive = new BigDecimal(this.regular, this.decimal, 1);
 			System.out.println("help" + positive.sign);
 			return bd2.subtract(positive);
 		}
-		
-		// find and organize each of the 4 arrays;
+
+		// find and organize each of the 4 arrays to be added, by size
 		ArrayList<Integer> bigReg = largerArray(regular, bd2.regular, false);
 		ArrayList<Integer> bigDec = largerArray(decimal, bd2.decimal, true);
 		ArrayList<Integer> smallReg;
@@ -91,7 +93,7 @@ public class BigDecimal {
 		}
 
 		// add the regular arrays
-		BigDecimal regular = addHelper(bigReg, smallReg);
+		BigDecimal regularSum = addHelper(bigReg, smallReg);
 
 		// add zeroes to the decimal with less digits
 		if (smallDec.size() > bigDec.size()) {
@@ -103,14 +105,22 @@ public class BigDecimal {
 		// add the decimal arrays
 		BigDecimal decimal = addHelper(smallDec, bigDec);
 		// special case where decimals add up to one
+
 		if (decimal.regular.size() > smallDec.size() && decimal.regular.size() > bigDec.size()) {
-			regular = addHelper(regular.regular, new BigDecimal("1").regular);
+			BigDecimal one = new BigDecimal("1");
+			if (regular == largerArray(one.regular, regular, false)) {
+
+				regularSum = addHelper(regularSum.regular, one.regular);
+			} else {
+				regularSum = addHelper(one.regular, regularSum.regular);
+			}
+
 			decimal.regular.remove(0);
 		}
 
-		BigDecimal result = new BigDecimal(regular.regular, decimal.regular, 1);
+		BigDecimal result = new BigDecimal(regularSum.regular, decimal.regular, 1);
 
-		if(sign < 1 && bd2.sign < 1){
+		if (sign < 1 && bd2.sign < 1) {
 			result.sign = -1;
 		}
 		return result;
@@ -182,14 +192,16 @@ public class BigDecimal {
 	 */
 	private ArrayList<Integer> compliment(ArrayList<Integer> arg, int size) {
 		ArrayList<Integer> result = new ArrayList<>();
+
+		// if the argument is empty, return an empty compliment
 		if (arg.isEmpty()) {
 			return result;
 		}
-		
-		
 
 		int last = 0;
+		// loop through the argument array
 		for (int i = 0; i < arg.size(); i++) {
+
 			if (arg.get(i) == 0) {
 				continue;
 			}
@@ -200,8 +212,8 @@ public class BigDecimal {
 		if (!result.isEmpty()) {
 			result.set(last, 10 - arg.get(last));
 		}
-		
-		//add on any nines
+
+		// add on any nines
 		if (arg.size() < size) {
 			int diff = size - arg.size();
 			for (int i = 0; i < diff; i++) {
@@ -220,6 +232,8 @@ public class BigDecimal {
 	 */
 	public BigDecimal subtract(BigDecimal B) {
 		// System.out.println("Signs: " + sign + " " + B.sign);
+		
+	//	System.out.println(
 		BigDecimal result;
 		// subtracting negative from positive is adding
 		if (sign > 0 && B.sign < 0) {
@@ -232,116 +246,119 @@ public class BigDecimal {
 			result = C.add(B);
 			result.sign = -1;
 			return result;
-			// subtracting two positive numbers or two negative numbers: 
-		} else  {
+			// subtracting two positive numbers or two negative numbers:
+		} else {
 
-			// find the result of the decimal values first:
-			// start by finding the larger decimal
-			ArrayList<Integer> largeDec = largerArray(decimal, B.decimal, true);
-			ArrayList<Integer> smallDec;
-			//assume our decimal is larger
-			boolean decLarger = true;
-			if (largeDec == decimal) {
-				smallDec = B.decimal;
-				System.out.println("this is wrong" + decimal + "  bigger than " + B.decimal);
-			} else {
-				smallDec = decimal;
-				//our decimal is not larger
-				decLarger = false;
+			int largeRegSize = regular.size();
+			if (B.regular.size() > largeRegSize) {
+				largeRegSize = B.regular.size();
 			}
+			// positive holds the positive value of this,
+			BigDecimal positive = new BigDecimal(regular, decimal, 1);
 
-			// now find the larger regular values;
-
-			ArrayList<Integer> largeReg = largerArray(regular, B.regular, false);
-			ArrayList<Integer> smallReg;
-		//	boolean regLarger = true;
-			if (largeReg == regular) {
-				smallReg = B.regular;
-			} else {
-				smallReg = regular;
-			//	regLarger = false;
-			}
-
-			System.out.println("In order: large reg, small reg, large dec, small dec");
-			System.out.println(largeReg);
-			System.out.println(smallReg);
-			System.out.println(largeDec);
-			System.out.println(smallDec);
-			
-			
-			// subtract the smaller values from the greater values
-			BigDecimal C = new BigDecimal(largeReg, largeDec, 1);
-		//	ArrayList<Integer> smallRegComp = compliment(smallReg, smallReg.size());
-	//		ArrayList<Integer> smallDecComp = compliment(smallDec, smallDec.size());
-			int magnitude = smallReg.size();
-			if (largeReg.size() > magnitude){
-				magnitude = largeReg.size();
-			}
-			BigDecimal D = new BigDecimal(compliment(smallReg, magnitude), compliment(smallDec, smallDec.size()),
+			// D is the comliment of B, which is added to A to find A-B
+			BigDecimal D = new BigDecimal(compliment(B.regular, largeRegSize), compliment(B.decimal, B.decimal.size()),
 					1);
-			
-			if(D.decimal.isEmpty() && !B.decimal.isEmpty()){
-				D.decimal.add(9); 
-			}
-			
-			if(D.regular.isEmpty() && !B.regular.isEmpty()){
-				smallReg.add(9); 
-			}
 
-			System.out.println("C: " + C);
-			System.out.println("D: " + D);
-			BigDecimal E = D.add(C);
-			System.out.println("E: " + E);
-			if (!C.regular.isEmpty() && !D.regular.isEmpty()) {
+			// I need to determine whether this regular number is larger than B,
+			// and if this decimal number is larger than B's
+			// decimal number.
+
+			System.out.println("At first, D is " + D);
+			BigDecimal E = D.add(positive);
+			System.out.println("D + this is: " + E);
+			boolean lostOne = false;
+			System.out.println("this: " + this + "B: " + B);
+			// if the this regular was smaller, we need to take its compliment,
+			// and the compliment of the decimal
+			if (!regular.isEmpty() && B.regular == largerArray(regular, B.regular, false) || regular.isEmpty()) {
+				E.regular = compliment(E.regular, E.regular.size());
+				E.decimal = compliment(E.decimal, E.decimal.size());
+				if (!E.decimal.isEmpty()) { // aditionally, if there is a
+											// decimal, it will fail to detect
+											// the regular has subtracted
+					// to fix this, we subtract one here.
+					E.regular = subtractOne(E.regular);
+					lostOne = true;
+				}
+			}
+			System.out.println("E before losing first digit: " + E);
+			// if we did add, we must subtract the leftmost digit.
+			if (!regular.isEmpty() && !D.regular.isEmpty()) {
 				// remove the one which should be added via the complement
 				// method
 				E.regular.remove(0);
-			}
-			// set the sign
+			} else {
+				if (!regular.isEmpty() && B.regular.isEmpty()) {
 
-			// if we subtracted decimals, we added one. We remove the one by
-			// subtracting again.
-			if (!B.decimal.isEmpty()) {
-				System.out.println("E so far:" + E);
-				E.regular = subtractOne(E.regular);
-				System.out.println("E so far:" + E);
-				if(!decLarger){
-				//	E.regular = subtractOne(E.regular);
-					System.out.println("E so far:" + E);
-					System.out.println("why not?           sdfsdf");
-					E.decimal = compliment(E.decimal, E.decimal.size());
-					System.out.println("E so far:" + E);
 				}
 			}
 
-			
-			
-			
+			// if we subtracted decimals, we added one. We remove the one by
+			// subtracting again.
 
-			E.sign = greaterValue(this, B);
+			System.out.println("this: " + this + " B: " + B);
+			if (!B.decimal.isEmpty()) {
+				System.out.println("E before decimal logic: " + E);
+				// E.regular = subtractOne(E.regular);
+			//	System.out.println("E so far:" + E);
+				// if the decimals would have a negative value, we subtract one
+				// again
+				if (B.decimal == largerArray(decimal, B.decimal, true) || decimal.isEmpty()) {
+					//check if the decimal subtracter one from the regular, and if it hasn't, do so
+					if (!lostOne) {
+						E.regular = subtractOne(E.regular);
+
+					}
+					
+					System.out.println("E after decimal logic:" + E);					
+				//	System.out.println("E so far:" + E);
+				}
+			}
+
+			// find the sign based on the original signs, and the size
+			int tempSign = greaterValue(this, B);
+			// if the number being subtracted from is negative,
+			if (this.sign < 0) {
+				// if this was larger, we stay negative
+				if (tempSign > 0) {
+					E.sign = -1;
+				} else {
+					E.sign = 1;
+				}
+				// if this was positive
+			} else if (this.sign > 0) {
+				// if this was larger, we stay positive
+				if (tempSign > 0) {
+					E.sign = 1;
+				} else {
+					E.sign = -1;
+				}
+			}
+
 			// System.out.println("C " + C);
-			
-			
-			
-			
-			
+
 			return E;
 		}
-		
 
 	}
-	
-	
-	private ArrayList<Integer> subtractOne(ArrayList<Integer> list){
+
+	private ArrayList<Integer> subtractOne(ArrayList<Integer> list) {
 		ArrayList<Integer> result = new ArrayList<>();
-		for(int i = 0; i < list.size(); i++){
-			result.add(9);
+		if (!list.isEmpty()) {
+
+			for (int i = 0; i < list.size(); i++) {
+				result.add(9);
+			}
+			result = addHelper(result, list).regular;
+
+			result.remove(0);
+			return result;
+		} else { // subtracting one from zero yeilds magnitude 1
+
+			result.add(1);
+			return result;
 		}
-		result = addHelper(result, list).regular;
-		
-		result.remove(0);
-		return result;
-		
 	}
 
 	/**
@@ -399,7 +416,7 @@ public class BigDecimal {
 			}
 
 		}
-		if(A.isEmpty()){
+		if (A.isEmpty()) {
 			return B;
 		}
 		return A;
